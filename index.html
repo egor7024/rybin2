@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>РУБИН - Продуктовый магазин</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #9b1111, #e0115f);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .cart {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .cart-icon {
+            font-size: 24px;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ffcc00;
+            color: #333;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        main {
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-title {
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .product-price {
+            color: #9b1111;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        
+        .add-to-cart {
+            background-color: #9b1111;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: #e0115f;
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        /* Стили для корзины */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 350px;
+            height: 100%;
+            background-color: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .cart-header {
+            background: linear-gradient(135deg, #9b1111, #e0115f);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .cart-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .close-cart {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .cart-content {
+            padding: 15px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-info {
+            flex: 2;
+        }
+        
+        .cart-item-name {
+            font-weight: 500;
+        }
+        
+        .cart-item-quantity {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .cart-item-price {
+            flex: 1;
+            text-align: right;
+            color: #9b1111;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .remove-item {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+        
+        .remove-item:hover {
+            color: #e0115f;
+        }
+        
+        .cart-total {
+            padding: 15px;
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            border-top: 1px solid #eee;
+            margin-top: 10px;
+        }
+        
+        .cart-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 0 15px 15px;
+        }
+        
+        .checkout-btn {
+            background-color: #9b1111;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background-color: #e0115f;
+        }
+        
+        .clear-cart {
+            background-color: #f8f8f8;
+            color: #e0115f;
+            border: 1px solid #e0115f;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .clear-cart:hover {
+            background-color: #ffecec;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        @media (max-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .cart-modal {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-modal {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">РУБИН</div>
+                <div class="cart" id="cart-btn">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="products-grid">
+                <!-- Товары будут добавлены через JavaScript -->
+            </div>
+        </div>
+    </main>
+    
+    <!-- Оверлей для корзины -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Модальное окно корзины -->
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-header">
+            <div class="cart-title">Ваша корзина</div>
+            <button class="close-cart" id="close-cart">×</button>
+        </div>
+        <div class="cart-content" id="cart-items">
+            <div class="empty-cart">Корзина пуста</div>
+        </div>
+        <div class="cart-total">
+            Итого: <span id="cart-total">0</span> ₽
+        </div>
+        <div class="cart-actions">
+            <button class="clear-cart" id="clear-cart">Очистить корзину</button>
+            <button class="checkout-btn">Оформить заказ</button>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2023 РУБИН - Продуктовый магазин. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Массив товаров
+        const products = [
+            { id: 1, name: "Хлеб Бородинский", price: 45, image: "https://cdn.metro-cc.ru/ru/ru_pim_88095001001_01.png" },
+            { id: 2, name: "Молоко 3,2%", price: 75, image: "https://cdn.pixabay.com/photo/2018/01/29/17/00/milk-3117258_640.jpg" },
+            { id: 3, name: "Сливочное масло", price: 120, image: "https://cdn.pixabay.com/photo/2016/03/05/19/02/butter-1238853_640.jpg" },
+            { id: 4, name: "Подсолнечное масло", price: 110, image: "https://cdn.pixabay.com/photo/2017/07/07/16/41/oil-2482434_640.jpg" },
+            { id: 5, name: "Рисовая крупа", price: 85, image: "https://cdn.pixabay.com/photo/2016/02/25/13/42/rice-1221896_640.jpg" },
+            { id: 6, name: "Гречневая крупа", price: 90, image: "https://cdn.pixabay.com/photo/2016/02/25/13/42/buckwheat-1221897_640.jpg" },
+            { id: 7, name: "Овсяная крупа", price: 65, image: "https://cdn.pixabay.com/photo/2017/06/26/19/03/porridge-2445290_640.jpg" },
+            { id: 8, name: "Манная крупа", price: 55, image: "https://cdn.pixabay.com/photo/2017/09/09/20/22/semolina-2733795_640.jpg" },
+            { id: 9, name: "Колбаса Докторская", price: 350, image: "https://cdn.pixabay.com/photo/2017/02/22/19/27/sausage-2089958_640.jpg" },
+            { id: 10, name: "Сыр Российский", price: 450, image: "https://cdn.pixabay.com/photo/2017/02/28/23/00/cheese-2107208_640.jpg" },
+            { id: 11, name: "Мясо Говядина", price: 600, image: "https://cdn.pixabay.com/photo/2018/02/25/07/15/beef-3179755_640.jpg" },
+            { id: 12, name: "Рыба Лосось", price: 800, image: "https://cdn.pixabay.com/photo/2016/03/05/19/02/salmon-1238248_640.jpg" },
+            { id: 13, name: "Мед Цветочный", price: 300, image: "https://cdn.pixabay.com/photo/2017/01/06/17/49/honey-1958464_640.jpg" },
+            { id: 14, name: "Джем Клубничный", price: 150, image: "https://cdn.pixabay.com/photo/2017/05/17/20/41/jam-2321851_640.jpg" },
+            { id: 15, name: "Кетчуп", price: 95, image: "https://cdn.pixabay.com/photo/2014/12/21/23/39/tomato-sauce-576442_640.png" },
+            { id: 16, name: "Майонез", price: 85, image: "https://cdn.pixabay.com/photo/2017/06/02/14/23/mayonnaise-2366588_640.jpg" },
+            { id: 17, name: "Вода Минеральная", price: 50, image: "https://cdn.pixabay.com/photo/2014/12/11/02/55/bottled-water-563423_640.jpg" },
+            { id: 18, name: "Сок Яблочный", price: 120, image: "https://cdn.pixabay.com/photo/2017/01/31/09/30/raspberry-2023404_640.jpg" },
+            { id: 19, name: "Кока-Кола", price: 90, image: "https://cdn.pixabay.com/photo/2020/05/10/05/14/pepsi-5152331_640.jpg" },
+            { id: 20, name: "Чай Lipton", price: 180, image: "https://cdn.pixabay.com/photo/2017/03/01/09/12/tea-bags-2108429_640.jpg" },
+            { id: 21, name: "Торт Наполеон", price: 400, image: "https://cdn.pixabay.com/photo/2018/05/01/18/24/napoleon-cake-3366431_640.jpg" },
+            { id: 22, name: "Конфеты Ассорти", price: 250, image: "https://cdn.pixabay.com/photo/2016/11/22/23/44/porsche-1851246_640.jpg" },
+            { id: 23, name: "Шоколадка", price: 70, image: "https://cdn.pixabay.com/photo/2016/11/29/08/31/chocolate-1868748_640.jpg" },
+            { id: 24, name: "Леденец", price: 25, image: "https://cdn.pixabay.com/photo/2014/12/21/23/59/lollipop-576506_640.png" }
+        ];
+
+        // Корзина
+        let cart = [];
+        
+        // Элементы DOM
+        const productsGrid = document.querySelector('.products-grid');
+        const cartCount = document.querySelector('.cart-count');
+        const cartBtn = document.getElementById('cart-btn');
+        const cartModal = document.getElementById('cart-modal');
+        const closeCart = document.getElementById('close-cart');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const overlay = document.getElementById('overlay');
+        const clearCartBtn = document.getElementById('clear-cart');
+        
+        // Отображение товаров
+        function displayProducts() {
+            productsGrid.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <div class="product-price">${product.price} ₽</div>
+                        <button class="add-to-cart" data-id="${product.id}">В корзину</button>
+                    </div>
+                `;
+                
+                productsGrid.appendChild(productCard);
+            });
+            
+            // Добавляем обработчики событий для кнопок
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
+            });
+        }
+        
+        // Добавление в корзину
+        function addToCart(e) {
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            const product = products.find(p => p.id === productId);
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    ...product,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+        }
+        
+        // Удаление из корзины
+        function removeFromCart(productId) {
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            
+            if (itemIndex !== -1) {
+                if (cart[itemIndex].quantity > 1) {
+                    cart[itemIndex].quantity -= 1;
+                } else {
+                    cart.splice(itemIndex, 1);
+                }
+                
+                updateCart();
+            }
+        }
+        
+        // Очистка корзины
+        function clearCart() {
+            cart = [];
+            updateCart();
+        }
+        
+        // Обновление корзины
+        function updateCart() {
+            updateCartCount();
+            updateCartModal();
+            
+            // Показываем/скрываем кнопку очистки в зависимости от содержимого корзины
+            clearCartBtn.style.display = cart.length > 0 ? 'block' : 'none';
+        }
+        
+        // Обновление счетчика корзины
+        function updateCartCount() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+        
+        // Обновление модального окна корзины
+        function updateCartModal() {
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="empty-cart">Корзина пуста</div>';
+                cartTotal.textContent = '0';
+                return;
+            }
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-quantity">${item.quantity} × ${item.price} ₽</div>
+                    </div>
+                    <div class="cart-item-price">${itemTotal} ₽</div>
+                    <button class="remove-item" data-id="${item.id}">×</button>
+                `;
+                
+                cartItems.appendChild(cartItem);
+            });
+            
+            // Добавляем обработчики для кнопок удаления
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const productId = parseInt(e.target.getAttribute('data-id'));
+                    removeFromCart(productId);
+                });
+            });
+            
+            cartTotal.textContent = total;
+        }
+        
+        // Открытие корзины
+        function openCart() {
+            cartModal.style.display = 'block';
+            overlay.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Закрытие корзины
+        function closeCartModal() {
+            cartModal.style.display = 'none';
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Инициализация
+        displayProducts();
+        
+        // Обработчики событий
+        cartBtn.addEventListener('click', openCart);
+        closeCart.addEventListener('click', closeCartModal);
+        overlay.addEventListener('click', closeCartModal);
+        clearCartBtn.addEventListener('click', clearCart);
+    </script>
+</body>
+</html>
